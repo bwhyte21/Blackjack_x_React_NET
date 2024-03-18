@@ -2,30 +2,75 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<div ng-controller="GameController">
+    <div class="jumbotron">BLACKJACK!</div>
+    @*Scoreboard Section*@
+    <div class="well">
+        <div id="scoreboard" class="row">
+            <div class="col-xs-3">Dealer</div>
+            <div class="col-xs-3">Player One</div>
+            <div class="col-xs-3">Player Two</div>
+            <div class="col-xs-3">Player Three</div>
+            <div class="col-xs-3">{{dealerRoundsWon}}</div>
+            <div class="col-xs-3">{{playerOneRoundsWon}}</div>
+            <div class="col-xs-3">{{playerTwoRoundsWon}}</div>
+            <div class="col-xs-3">{{playerThreeRoundsWon}}</div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    @*Dealer Section*@
+    <div class="well">
+        <div id="dealerCards" class="row">
+            <div>Dealer:</div>
+            <div class="col-xs-8">
+                <div ng-repeat="card in dealerCards" class="rotate-in">
+                    <div card suit="{{card.suit}}" value="{{card.value}}" first="{{$first}}"></div>
+                    @*<div>Suit: {{card.suit}}</div>
+                        <div>Value: {{card.value}}</div>
+                        <div first="{{$first}}"></div>*@
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    @*Player One Section*@
+    <div class="well">
+        <div id="playerOneCards" class="row">
+            <div>Player One: (You)</div>
+            <div class="col-xs-8">
+                <div ng-repeat="card in playerOneCards" class="rotate-in">
+                    <div card suit="{{card.suit}}" value="{{card.value}}"></div>
+                    @*<div>Suit: {{card.suit}}</div>
+                        <div>Value: {{card.value}}</div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    @*Player Two Section*@
+    <div class="well">
+        <div id="playerTwoCards" class="row">
+            <div>Player Two:</div>
+            <div class="col-xs-8">
+                <div ng-repeat="card in playerTwoCards" class="rotate-in">
+                    <div card suit="{{card.suit}}" value="{{card.value}}" first="{{$first}}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*Player Three Section*@
+    <div class="well">
+        <div id="playerThreeCards" class="row">
+            <div>Player Three:</div>
+            <div class="col-xs-8">
+                <div ng-repeat="card in playerThreeCards" class="rotate-in">
+                    <div card suit="{{card.suit}}" value="{{card.value}}" first="{{$first}}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*Controls Section*@
+    <div class="well">
+        <div id="controls" class="row">
+            <div class="btn btn-warning btn-lg" ng-click="hit()">Hit</div>
+            <div class="btn btn-success btn-lg" ng-click="stand()">Stand</div>
+        </div>
     </div>
 </div>
