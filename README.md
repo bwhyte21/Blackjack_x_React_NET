@@ -79,8 +79,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/bwhyte21/Blackjack_x_AngularJS_NET.git
-cd Blackjack_x_AngularJS_NET
+git clone https://github.com/bwhyte21/Blackjack_x_React_NET.git
+cd Blackjack_x_React_NET
 
 # Build and run (automatically builds React app)
 dotnet build
@@ -210,7 +210,7 @@ Client-side game logic built with **modern React patterns**:
 ## Project Structure
 
 ```
-Blackjack_x_AngularJS_NET/
+Blackjack_x_React_NET/
 ├── ClientApp/                      # React + TypeScript frontend
 │   ├── src/
 │   │   ├── components/            # React components
@@ -449,7 +449,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 **Built with <3 using React 19, TypeScript, and .NET 9**
 
-[![GitHub stars](https://img.shields.io/github/stars/bwhyte21/Blackjack_x_AngularJS_NET?style=social)](https://github.com/bwhyte21/Blackjack_x_AngularJS_NET/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/bwhyte21/Blackjack_x_AngularJS_NET?style=social)](https://github.com/bwhyte21/Blackjack_x_AngularJS_NET/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/bwhyte21/Blackjack_x_React_NET?style=social)](https://github.com/bwhyte21/Blackjack_x_React_NET/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/bwhyte21/Blackjack_x_React_NET?style=social)](https://github.com/bwhyte21/Blackjack_x_React_NET/network/members)
 
 </div>
