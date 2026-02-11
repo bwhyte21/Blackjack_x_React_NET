@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <Target Name="BuildClientApp" BeforeTargets="Build">
-    <Exec Command="npm install" WorkingDirectory="ClientApp" />
-    <Exec Command="npm run build" WorkingDirectory="ClientApp" />
-  </Target>
+	<ItemGroup>
+		<None Include=".github\pull_request_template.md" />
+	</ItemGroup>
+
+	<Target Name="BuildClientApp" BeforeTargets="Build">
+		<Exec Command="npm install" WorkingDirectory="ClientApp" />
+		<Exec Command="npm run build" WorkingDirectory="ClientApp" />
+	</Target>
 
 </Project>
