@@ -147,7 +147,7 @@ migration steps and parity checks.
 - **Leverage TypeScript's type inference** for variable declarations when the type is obvious
 
 ```typescript
-// ✅ Good
+// GOOD
 interface User {
   id: string;
   name: string;
@@ -158,7 +158,7 @@ function getUser(id: string): User | null {
   // implementation
 }
 
-// ❌ Bad
+// BAD
 function getUser(id: any): any {
   // implementation
 }
