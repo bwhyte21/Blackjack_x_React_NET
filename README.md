@@ -11,7 +11,7 @@
 [![MUI](https://img.shields.io/badge/MUI-7.3-007FFF?logo=mui&logoColor=white)](https://mui.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Blackjack Game](https://github.com/bwhyte21/Blackjack_x_AngularJS_NET/blob/development/blackjackReact_img.PNG)
+![Blackjack Game](./blackjackReact_img.png)
 
 *Features production-grade security hardening, Material-UI design, and smooth card animations*
 
