@@ -4,109 +4,133 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Blackjack (21) card game built with ASP.NET MVC 5 (.NET Framework 4.8) backend and AngularJS 1.6.5 frontend. All game logic runs client-side in the browser.
+A Blackjack (21) card game built with ASP.NET Core MVC (.NET 9) backend and React 18 + TypeScript frontend. All game logic runs client-side in the browser via React hooks. The ASP.NET backend serves the SPA from `wwwroot/dist`.
 
 ## Building and Running
 
-### Build the Solution
+### Build Everything (Backend + Frontend)
 
-```powershell
-# From the BlackJack directory
-msbuild BlackJack.sln /t:Build /p:Configuration=Debug
+```bash
+dotnet build
 ```
 
-### Run with IIS Express
+This triggers MSBuild which automatically runs `npm install` and `npm run build` in `ClientApp/` before building the .NET project.
 
-Open the solution in Visual Studio and press F5, or:
+### Run the Application
 
-```powershell
-# IIS Express should be configured to run at http://localhost:51373/
-# Path is typically: C:\Program Files\IIS Express\iisexpress.exe
+```bash
+dotnet run
 ```
 
-### Restore NuGet Packages
+Navigate to `https://localhost:5001` (or the port shown in console output).
 
-```powershell
-nuget restore BlackJack\BlackJack.sln
+### Frontend Development (Vite HMR)
+
+```bash
+cd ClientApp
+npm run dev
+```
+
+This starts the Vite dev server with hot module replacement at `http://localhost:5173`.
+
+### Production Build
+
+```bash
+cd ClientApp
+npm run build
+cd ..
+dotnet publish -c Release
 ```
 
 ## Architecture
 
-### Backend (.NET)
+### Backend (.NET 9)
 
-The ASP.NET MVC backend is minimal - it primarily serves as a host for the single-page application. Game logic does NOT run on the server.
+The ASP.NET Core MVC backend is minimal — it serves the React SPA. No API endpoints or server-side game logic.
 
-- **Controllers**: `HomeController` serves views only (Index, About, Contact actions)
-- **Models**: None - no server-side game logic or data models
-- **Views**: Razor views in `Views/Home/`, main game view is `Index.cshtml`
-- **Configuration**:
-  - `App_Start/BundleConfig.cs` - CSS/JS bundling configuration
-  - `App_Start/RouteConfig.cs` - MVC routing
-  - `Web.config` - ASP.NET configuration (targeting .NET 4.8)
+- **`Program.cs`** — Minimal hosting with static files middleware and SPA fallback routing
+- **`Controllers/HomeController.cs`** — Single `Index()` action returning the SPA container view
+- **`Views/Home/Index.cshtml`** — Minimal HTML that loads `/dist/main.js` and `/dist/index.css`
+- **`BlackjackReact.csproj`** — Includes MSBuild target that auto-builds React before .NET build
 
-### Frontend (AngularJS)
+### Frontend (React 18 + TypeScript + Vite)
 
-All game logic is implemented client-side in AngularJS. The app is structured as follows:
+All game logic is implemented client-side in React with TypeScript. Located in `ClientApp/src/`.
 
-**Module**: `blackjackGame` (defined in `Views/Shared/_Layout.cshtml`)
+**Types** (`types/`):
 
-- Depends on `ngRoute` and `ngAnimate`
-- AngularJS 1.6.5 loaded from CDN
+- `game.types.ts` — `Card`, `Suit`, `Value`, `GameState`, `GameAction` type definitions
 
-**Structure** (`Scripts/ang/`):
+**Hooks** (`hooks/`):
 
-- **Controllers**:
-  - `gameController.js` - Main game logic (hit/stand actions, scoring, round management)
-  - `mainController.js` - Minimal, currently unused
+- `useDeck.ts` — Card deck management: Fischer-Yates shuffle, card drawing via `useRef` (avoids stale closures), Ace-aware scoring (1 or 11)
+- `useGameState.ts` — Game state via `useReducer`: hit/stand/newHand actions, dealer AI with recursive 500ms draws, bust detection, round scoring
 
-- **Services**:
-  - `deck.js` - Card deck management, implements Fischer-Yates shuffle, scoring logic with Ace handling (counts as 1 or 11)
+**Components** (`components/`):
 
-- **Directives**:
-  - `card.js` - Renders individual playing cards using CSS sprites, handles face-down dealer card
+- `GameBoard/GameBoard.tsx` — Main orchestrator: MUI AppBar, Container, Paper layout; wires hooks to child components; Snackbar for game messages
+- `Card/Card.tsx` — Renders individual cards using CSS sprite classes (`card`, suit, value, `back`, `rotate-in`)
+- `CardHand/CardHand.tsx` — Displays a player's hand with face-down logic for dealer's first card
+- `Scoreboard/Scoreboard.tsx` — MUI Grid showing rounds won per player
+- `GameControls/GameControls.tsx` — Hit/Stand MUI Buttons, disabled when `gameOver` is true
 
-**Game Flow**:
+**Styles** (`styles/`):
 
-1. `Deck` service initializes and shuffles a 52-card deck
-2. `GameController` deals initial cards to dealer and 3 players
-3. Player One (user) can hit or stand via buttons in `Index.cshtml`
-4. Dealer draws cards until score >= 17
-5. Rounds won tracked in `$scope.dealerRoundsWon`, `$scope.playerOneRoundsWon`, etc.
-6. Deck reshuffles when less than 26 cards remain
+- `_variables.scss` — Card dimensions (83x115px), animation timing (550ms), sprite offsets (93px x, 115px y)
+- `_mixins.scss` — Card animation and 3D rotation mixins
+- `cards.scss` — Sprite positioning for suits and values (maps to `full_deck.png`)
+- `animations.scss` — `rotateInCard` and `flipCard` keyframe animations (3D perspective rotation)
+- `global.scss` — Minimal body reset (MUI handles everything else)
+
+**Theme** (`theme.ts`):
+
+- MUI dark theme: green table background (`#0d5d0d`), gold accents (`#ffd700`), custom Button and Paper overrides
+
+**Entry Points**:
+
+- `main.tsx` — React root with StrictMode
+- `App.tsx` — ThemeProvider + CssBaseline + GameBoard + style imports
+
+### Game Flow
+
+1. `useDeck` creates and shuffles a 52-card deck (stored in `useRef`)
+2. `useGameState` calls `newHand()` on mount — deals 2 cards to dealer and 3 players
+3. Player One (user) clicks Hit or Stand buttons
+4. **Hit**: draws card, checks bust after 300ms delay; if bust, dealer wins, new hand after 800ms
+5. **Stand**: dealer draws recursively until score >= 17 (500ms between draws); compares scores
+6. Deck reshuffles when < 26 cards remain
+7. Game messages shown via MUI Snackbar (replaced browser `alert()`)
 
 ### Key Files
 
-- `BlackJack/BlackJack/Views/Home/Index.cshtml` - Main game UI with ng-controller and card display
-- `BlackJack/BlackJack/Views/Shared/_Layout.cshtml` - Layout template, defines AngularJS module and script loading order
-- `BlackJack/BlackJack/Scripts/ang/controllers/gameController.js` - Core game logic
-- `BlackJack/BlackJack/Scripts/ang/services/deck.js` - Card deck and scoring implementation
+- `ClientApp/src/hooks/useDeck.ts` — Deck service (shuffle, draw, score)
+- `ClientApp/src/hooks/useGameState.ts` — Core game logic (hit, stand, newHand, dealer AI)
+- `ClientApp/src/components/GameBoard/GameBoard.tsx` — Main UI orchestrator
+- `ClientApp/src/styles/cards.scss` — Card sprite positioning
+- `ClientApp/src/types/game.types.ts` — TypeScript interfaces
+- `Views/Home/Index.cshtml` — SPA container HTML
 
 ## Important Notes
 
-### Script Loading Order
+### Card Sprite System
 
-Scripts MUST load in this order (see `_Layout.cshtml`):
+- Card sprites use CSS classes from `cards.scss` applied to div elements
+- `full_deck.png` sprite sheet: 93px column width, 115px row height
+- Suits: `.diamond` (row 0), `.club` (row 1), `.heart` (row 2), `.spade` (row 3)
+- Values: `.ace` through `.king` (columns 0-12, calculated via SCSS loop)
+- Face-down card: `.back` class uses `back_of_card.png`
+- Images served from `wwwroot/images/` (production) and `ClientApp/public/images/` (Vite dev)
 
-1. AngularJS core, ngRoute, ngAnimate (from CDN)
-2. Module definition: `angular.module('blackjackGame', ['ngRoute', 'ngAnimate'])`
-3. `mainController.js`
-4. `deck.js` (service)
-5. `card.js` (directive)
-6. `gameController.js`
+### State Management
 
-### CSS and Card Display
+- Game state managed via `useReducer` in `useGameState.ts`
+- Deck stored in `useRef` (not `useState`) to avoid stale closure issues during sequential draws
+- Timer refs track all `setTimeout` calls for cleanup
+- No persistence — refreshing browser resets game
+- Players Two and Three are dealt cards but have no AI or interaction
 
-- Card sprites use CSS classes defined in `Content/cards.css`
-- Card images stored in `Content/Images/` (full_deck.png, back_of_card.png)
-- Animations defined in `Content/animation.css` (rotate-in, slide-right classes)
-- Cards rendered via `card` directive with attributes: `suit`, `value`, `first` (for dealer's face-down card)
+### Build Pipeline
 
-### Game State Management
-
-- All game state stored in AngularJS `$scope` variables in `gameController.js`
-- No persistence - refreshing browser resets game
-- Players Two and Three are dealt cards but have no AI or interaction (UI only shows their cards)
-
-### Development vs Production
-
-The `_Layout.cshtml` includes commented-out minified AngularJS CDN links. Currently uses non-minified versions for better error messages during development.
+- Vite builds to `wwwroot/dist/` with predictable filenames (`main.js`, `index.css`)
+- MSBuild pre-build target in `.csproj` auto-runs `npm install` + `npm run build`
+- `@` path alias maps to `ClientApp/src/` (configured in both `vite.config.ts` and `tsconfig.app.json`)

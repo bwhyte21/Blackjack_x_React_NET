@@ -1,0 +1,20 @@
+export default {
+  bracketSpacing: true,
+  printWidth: 100,
+  semi: true,
+  singleQuote: true,
+  tabWidth: 2,
+  trailingComma: 'all',
+  endOfLine: 'auto',
+  plugins: ['@trivago/prettier-plugin-sort-imports'],
+  importOrder: [
+    '^react$',
+    '^react-dom$',
+    '^react-router-dom$',
+    '<THIRD_PARTY_MODULES>',
+    '^[.][.]/.*(?<!\\.scss)$',
+    '^[.]/.*(?<!\\.scss)$',
+    '.*\\.scss$',
+  ],
+  importOrderSortSpecifiers: true,
+};

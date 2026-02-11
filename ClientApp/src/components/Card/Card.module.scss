@@ -1,0 +1,52 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.cardWrapper {
+  display: inline-block;
+  height: $card-height;
+  margin: 0;
+  width: $card-width;
+}
+
+.card {
+  clip-path: inset(0 0 2px 0);
+  height: $card-height;
+  overflow: hidden;
+  position: relative;
+  width: $card-width;
+}
+
+.sprite {
+  display: block;
+  height: calc(#{$card-height} * 4);
+  left: var(--card-x, 0px);
+  max-height: none;
+  max-width: none;
+  position: absolute;
+  top: var(--card-y, 0px);
+  width: calc(#{$card-width} * 13);
+}
+
+.backImage {
+  display: block;
+  height: $card-height;
+  max-width: none;
+  max-height: none;
+  width: $card-width;
+}
+
+@keyframes rotateInCard {
+  from {
+    @include rotate-3d(40deg);
+    opacity: 0.7;
+  }
+  to {
+    @include rotate-3d(0deg);
+    opacity: 1;
+  }
+}
+
+.rotateIn {
+  animation: rotateInCard $card-animation-duration $card-animation-easing;
+  transform-origin: center;
+}
