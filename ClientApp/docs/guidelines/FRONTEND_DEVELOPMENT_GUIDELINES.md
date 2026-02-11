@@ -240,6 +240,13 @@ async function submitContactForm(formData: ContactFormData): Promise<ApiResponse
 - Keep pull requests focused and scoped to a single feature or fix
 - Resist the urge to "improve" unrelated code while working on a task
 
+### AI Content Hygiene
+
+- Remove placeholder or template content after edits (e.g., bracketed text like `[Description]`)
+- Delete generic filler and ensure docs reflect actual project behavior
+- If AI assistance is used, verify facts and rewrite to match project context
+- Follow [docs/skills/AI_CONTENT_HYGIENE.md](../skills/AI_CONTENT_HYGIENE.md) for the full checklist
+
 ### Before Creating New Files
 
 1. **Search for existing files** that serve a similar purpose
@@ -341,194 +348,11 @@ When reviewing code:
 
 ---
 
-## README Template
+## README Guidance
 
-Use this template when creating README files for new projects. Customize sections as needed based on project requirements.
+When creating or updating a README:
 
-### Standard README Structure
-
-````markdown
-# [Project Name] - [Project Type/Framework]
-
-[![Badge 1](badge-url)](link)
-[![Badge 2](badge-url)](link)
-[![Badge 3](badge-url)](link)
-
-[Brief one-sentence description of the project]
-
-## Overview
-
-[1-2 paragraph description of the project, its purpose, and key highlights]
-
-## Features
-
-<details open>
-<summary><strong>[Feature Category 1]</strong></summary>
-
-- **[Feature Name]** - [Description]
-- **[Feature Name]** - [Description]
-
-</details>
-
-<details open>
-<summary><strong>[Feature Category 2]</strong></summary>
-
-- **[Feature Name]** - [Description]
-- **[Feature Name]** - [Description]
-
-</details>
-
-## Tech Stack
-
-### Core Technologies
-
-| Technology  | Version | Purpose   |
-| ----------- | ------- | --------- |
-| [Framework] | X.X.X   | [Purpose] |
-| [Language]  | X.X.X   | [Purpose] |
-
-### Key Dependencies
-
-| Package        | Version | Purpose   |
-| -------------- | ------- | --------- |
-| [Package Name] | X.X.X   | [Purpose] |
-
-### Development Tools
-
-| Tool        | Version | Purpose   |
-| ----------- | ------- | --------- |
-| [Tool Name] | X.X.X   | [Purpose] |
-
-## Project Structure
-
-```text
-src/
-├── [folder]/           # [Description]
-│   ├── [subfolder]/   # [Description]
-│   └── [file].ext    # [Description]
-├── [folder]/           # [Description]
-└── [file].ext         # [Description]
-```
-````
-
-## Available Scripts
-
-<details>
-<summary><strong>Development Commands</strong></summary>
-
-### `[command]`
-
-[Description of what the command does]
-
-</details>
-
-<details>
-<summary><strong>Production Build</strong></summary>
-
-### `[build-command]`
-
-[Description of production build process]
-
-</details>
-
-## [Key System/Feature Name]
-
-[Detailed explanation of a key system or feature]
-
-### [Sub-section]
-
-[Additional details or usage examples]
-
-```[language]
-// Code example
-```
-
-## Project Development Guidelines
-
-This project follows comprehensive development standards. See [FRONTEND_DEVELOPMENT_GUIDELINES.md](FRONTEND_DEVELOPMENT_GUIDELINES.md) for:
-
-- **Core Principles** - KISS, DRY, YAGNI
-- **Code Quality Standards** - [List relevant standards]
-- **Component Patterns** - [Framework] best practices
-- **Architecture Guidelines** - Root cause analysis, pattern recognition
-- **Performance Optimization** - [List optimization approaches]
-- **Accessibility** - WCAG compliance
-
-### Key Development Practices
-
-- **Type Safety** - [Type system details]
-- **Component Composition** - [Composition approach]
-- **Performance** - [Performance strategies]
-- **Accessibility** - [Accessibility requirements]
-- **Code Quality** - [Quality enforcement tools]
-
-## Building for Production
-
-### [Integration Details if applicable]
-
-[Description of how the project integrates with other systems]
-
-1. **Build command:**
-
-   ```bash
-   [build command]
-   ```
-
-2. **Build output location:**
-
-   ```text
-   [output-folder]/
-   ├── [file]
-   └── [folder]/
-   ```
-
-3. **[Integration System]:**
-   - [Integration step 1]
-   - [Integration step 2]
-
-### Deployment Steps
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-## Browser Support
-
-- **Production:**
-  - [Browser requirements]
-
-- **Development:**
-  - [Browser recommendations]
-
-## Documentation
-
-| Document              | Description   |
-| --------------------- | ------------- |
-| [GUIDELINES.md](link) | [Description] |
-| [OTHER_DOC.md](link)  | [Description] |
-
-## Additional Resources
-
-| Resource              | Description   |
-| --------------------- | ------------- |
-| [Resource Name](link) | [Description] |
-
----
-
-Built with [Technology Stack]
-
-```markdown
-### Template Usage Guidelines
-
-- **Badges**: Include relevant technology badges at the top for quick tech stack overview
-- **Collapsible Sections**: Use `<details>` tags for feature lists to keep README scannable
-- **Tables**: Use tables for structured data (dependencies, commands, resources)
-- **Code Blocks**: Include language-specific syntax highlighting
-- **Links**: Reference other documentation files and external resources
-- **Customization**: Remove sections that don't apply to your project
-- **Consistency**: Maintain the same formatting style across all project READMEs
-
----
-
-### _Last Updated: January 28, 2026_
-```
+- Keep the content specific to this project and delete unused sections
+- Replace placeholders with concrete details or remove the section
+- Prefer concise, factual descriptions over generic marketing text
+- Link to relevant docs in this repo when deeper detail is needed

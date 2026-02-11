@@ -10,7 +10,6 @@ public class ErrorController : Controller
 	[ApiExplorerSettings(IgnoreApi = true)]
 	public IActionResult HandleError()
 	{
-		// Log error here if needed (inject ILogger)
 		return Problem(
 			statusCode: 500,
 			title: "An error occurred while processing your request."
