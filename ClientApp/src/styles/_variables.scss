@@ -1,0 +1,7 @@
+// Card dimensions (sprite sheet layout uses fixed steps)
+$card-height: 115px;
+$card-width: 84px;
+
+// Animation timing
+$card-animation-duration: 550ms;
+$card-animation-easing: cubic-bezier(0.175, 0.885, 0.45, 1.595); // easeOutBack

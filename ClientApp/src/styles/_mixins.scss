@@ -1,0 +1,9 @@
+@use "variables" as *;
+
+@mixin card-animation($duration: $card-animation-duration, $easing: $card-animation-easing) {
+  transition: all $duration $easing;
+}
+
+@mixin rotate-3d($angle, $perspective: 300px) {
+  transform: perspective($perspective) rotateY($angle);
+}
