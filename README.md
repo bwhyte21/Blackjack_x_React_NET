@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 # Blackjack React
 
@@ -11,7 +11,7 @@
 [![MUI](https://img.shields.io/badge/MUI-7.3-007FFF?logo=mui&logoColor=white)](https://mui.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Blackjack Game](https://github.com/bwhyte21/Blackjack_x_AngularJS_NET/blob/development/readme_img.PNG)
+![Blackjack Game](https://github.com/bwhyte21/Blackjack_x_AngularJS_NET/blob/development/blackjackReact_img.PNG)
 
 *Features production-grade security hardening, Material-UI design, and smooth card animations*
 
@@ -30,7 +30,7 @@
 **Gameplay**
 - Full Blackjack rules (hit, stand, bust)
 - Ace-aware scoring (1 or 11)
-- Dealer AI (draws until ? 17)
+- Dealer AI (draws until ≥ 17)
 - Auto deck reshuffle (< 26 cards)
 
 </td>
@@ -211,44 +211,44 @@ Client-side game logic built with **modern React patterns**:
 
 ```
 Blackjack_x_AngularJS_NET/
-??? ClientApp/                      # React + TypeScript frontend
-?   ??? src/
-?   ?   ??? components/            # React components
-?   ?   ?   ??? GameBoard/
-?   ?   ?   ??? Card/
-?   ?   ?   ??? CardHand/
-?   ?   ?   ??? GameControls/
-?   ?   ?   ??? Scoreboard/
-?   ?   ??? hooks/                 # Custom React hooks
-?   ?   ?   ??? useDeck.ts
-?   ?   ?   ??? useGameState.ts
-?   ?   ??? types/                 # TypeScript definitions
-?   ?   ?   ??? game.types.ts
-?   ?   ??? styles/                # SCSS modules
-?   ?   ?   ??? cards.scss        # Card sprite positioning
-?   ?   ?   ??? animations.scss   # 3D card animations
-?   ?   ?   ??? global.scss
-?   ?   ??? test/                  # Test utilities
-?   ?   ??? theme.ts               # MUI theme configuration
-?   ?   ??? App.tsx
-?   ?   ??? main.tsx
-?   ??? public/images/             # Card sprites (dev)
-?   ??? package.json
-?   ??? vite.config.ts
-?   ??? tsconfig.json
-??? Controllers/
-?   ??? HomeController.cs          # SPA entry point
-?   ??? ErrorController.cs         # Error handling
-??? Views/Home/
-?   ??? Index.cshtml               # SPA container
-??? wwwroot/
-?   ??? dist/                      # Vite build output
-?   ??? images/                    # Card sprites (production)
-??? Program.cs                     # ASP.NET startup + security
-??? appsettings.json
-??? appsettings.Production.json
-??? BlackjackReact.csproj          # MSBuild React integration
-??? SECURITY_PLAN.md               # Comprehensive security guide
+├── ClientApp/                      # React + TypeScript frontend
+│   ├── src/
+│   │   ├── components/            # React components
+│   │   │   ├── GameBoard/
+│   │   │   ├── Card/
+│   │   │   ├── CardHand/
+│   │   │   ├── GameControls/
+│   │   │   └── Scoreboard/
+│   │   ├── hooks/                 # Custom React hooks
+│   │   │   ├── useDeck.ts
+│   │   │   └── useGameState.ts
+│   │   ├── types/                 # TypeScript definitions
+│   │   │   └── game.types.ts
+│   │   ├── styles/                # SCSS modules
+│   │   │   ├── cards.scss        # Card sprite positioning
+│   │   │   ├── animations.scss   # 3D card animations
+│   │   │   └── global.scss
+│   │   ├── test/                  # Test utilities
+│   │   ├── theme.ts               # MUI theme configuration
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── public/images/             # Card sprites (dev)
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── tsconfig.json
+├── Controllers/
+│   ├── HomeController.cs          # SPA entry point
+│   └── ErrorController.cs         # Error handling
+├── Views/Home/
+│   └── Index.cshtml               # SPA container
+├── wwwroot/
+│   ├── dist/                      # Vite build output
+│   └── images/                    # Card sprites (production)
+├── Program.cs                     # ASP.NET startup + security
+├── appsettings.json
+├── appsettings.Production.json
+├── BlackjackReact.csproj          # MSBuild React integration
+└── SECURITY_PLAN.md               # Comprehensive security guide
 ```
 
 ---
@@ -298,8 +298,8 @@ sequenceDiagram
 1. **New Hand**: Dealer gets 2 cards (one face-down), Player One gets 2 cards
 2. **Player Turn**: Click **Hit** (draw card) or **Stand** (end turn)
 3. **Bust Detection**: If player exceeds 21, dealer wins automatically
-4. **Dealer AI**: Dealer reveals hole card, draws until score ? 17
-5. **Scoring**: Highest score ? 21 wins; Aces count as 1 or 11
+4. **Dealer AI**: Dealer reveals hole card, draws until score ≥ 17
+5. **Scoring**: Highest score ≤ 21 wins; Aces count as 1 or 11
 6. **Auto Reshuffle**: Deck reshuffles when < 26 cards remain
 
 ---
@@ -310,13 +310,13 @@ The application implements **production-grade security measures**:
 
 | Security Feature | Status | Description |
 |------------------|--------|-------------|
-| **Content Security Policy** | ? | Prevents XSS attacks |
-| **CORS Protection** | ? | Explicit origin allowlist |
-| **Host Header Filtering** | ? | Prevents injection attacks |
-| **Request Size Limits** | ? | DoS mitigation (10MB max) |
-| **HSTS** | ? | HTTP Strict Transport Security |
-| **Anti-Forgery Tokens** | ? | CSRF protection configured |
-| **Secure Error Handling** | ? | No information leakage |
+| **Content Security Policy** | ✅ | Prevents XSS attacks |
+| **CORS Protection** | ✅ | Explicit origin allowlist |
+| **Host Header Filtering** | ✅ | Prevents injection attacks |
+| **Request Size Limits** | ✅ | DoS mitigation (10MB max) |
+| **HSTS** | ✅ | HTTP Strict Transport Security |
+| **Anti-Forgery Tokens** | ✅ | CSRF protection configured |
+| **Secure Error Handling** | ✅ | No information leakage |
 
 > **See [SECURITY_PLAN.md](./SECURITY_PLAN.md)** for the complete security architecture and implementation roadmap.
 
