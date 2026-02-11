@@ -11,6 +11,7 @@ This app is built with Vite and React. It runs standalone for local development 
 - Table layout with dealer and player hands
 - Hit/Stand controls
 - Round scoring and basic game messaging
+- Component and hook tests for UI and game logic
 
 ## Tech Stack
 
@@ -29,6 +30,15 @@ This app is built with Vite and React. It runs standalone for local development 
 | ------------- | ------- | ----------------------- |
 | @mui/material | 7.3.7   | UI components           |
 | classnames    | 2.5.1   | Conditional class names |
+
+### Testing
+
+| Tool                     | Version | Purpose                     |
+| ------------------------ | ------- | --------------------------- |
+| Vitest                   | 3.2.4   | Test runner                 |
+| @testing-library/react   | 16.3.0  | Component testing utilities |
+| @testing-library/jest-dom| 6.8.0   | DOM matchers                |
+| jsdom                    | 26.1.0  | Browser-like test runtime   |
 
 ## UI Structure
 
@@ -63,6 +73,9 @@ This app is built with Vite and React. It runs standalone for local development 
 - `npm run build` - Type-check and create a production build
 - `npm run preview` - Preview the production build locally
 - `npm run lint` - Run ESLint
+- `npm run test` - Run lint and unit tests with Vitest
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage
 
 ### Local Run
 
@@ -74,6 +87,11 @@ npm run dev
 ### Build Output
 
 Production builds emit to `../wwwroot/dist`.
+
+### Tests
+
+- Unit tests live under `src/**/__tests__`
+- Test setup is in `src/test/setupTests.ts`
 
 ## Guidelines
 
