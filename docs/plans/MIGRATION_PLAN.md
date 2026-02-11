@@ -8,7 +8,7 @@ This plan modernizes a legacy Blackjack card game by migrating from .NET Framewo
 
 - .NET Framework 4.8 is in long-term support mode with no new features
 - AngularJS reached end-of-life in January 2022
-- Bootstrap adds 150KB+ for minimal UI components used
+- Bootstrap adds 150KB+ for minimal UI components used; Material UI provides a richer component library with built-in theming
 - Modern React + Vite provides faster development with HMR
 - SCSS enables better style organization and maintainability
 
@@ -24,12 +24,17 @@ Since the game is 100% client-side with no API requirements, ASP.NET Core MVC wi
 - **Custom Hooks**: `useDeck` (shuffle, draw, score), `useGameState` (game reducer + dealer AI)
 - **Build Tool**: Vite (10x faster than CRA, ESM-native, official React recommendation)
 
-### Styling: SCSS + CSS Modules
+### UI Library: Material UI (MUI)
+
+- **MUI Components**: `AppBar`, `Paper`, `Button`, `Grid`, `Typography`, `Container` replace Bootstrap layout/widgets
+- **MUI Theming**: Custom theme with dark green table palette, gold accents, and game-appropriate typography
+- **Emotion**: MUI's styling engine (included as peer dependency)
+
+### Styling: SCSS (Card-Specific Only)
 
 - **Cards SCSS**: Sprite positioning system (preserve exact pixel values)
-- **Animations SCSS**: 3D rotation with mixins for vendor prefixes
-- **Layout SCSS**: Modern CSS Grid/Flexbox replacing Bootstrap
-- **Component Modules**: Scoped styles per component (GameBoard.module.scss)
+- **Animations SCSS**: 3D rotation with keyframe animations
+- **Global SCSS**: Minimal body/reset styles only — MUI handles layout, buttons, and containers
 
 ## Project Structure
 
@@ -61,7 +66,8 @@ BlackjackReact/
     │       └── back_of_card.png    # Card back image
     └── src/
         ├── main.tsx                # React entry point
-        ├── App.tsx                 # Root component
+        ├── App.tsx                 # Root component with MUI ThemeProvider
+        ├── theme.ts                # MUI theme configuration (colors, typography)
         ├── types/
         │   └── game.types.ts       # Card, GameState, GameAction interfaces
         ├── hooks/
@@ -69,26 +75,22 @@ BlackjackReact/
         │   └── useGameState.ts     # Game state reducer + dealer AI
         ├── components/
         │   ├── GameBoard/
-        │   │   ├── GameBoard.tsx
-        │   │   └── GameBoard.module.scss
+        │   │   └── GameBoard.tsx   # Uses MUI Container, Paper, AppBar
         │   ├── Scoreboard/
-        │   │   ├── Scoreboard.tsx
-        │   │   └── Scoreboard.module.scss
+        │   │   └── Scoreboard.tsx  # Uses MUI Grid, Typography
         │   ├── CardHand/
-        │   │   ├── CardHand.tsx
-        │   │   └── CardHand.module.scss
+        │   │   └── CardHand.tsx    # Uses MUI Box, Typography
         │   ├── Card/
         │   │   ├── Card.tsx
-        │   │   └── Card.module.scss
+        │   │   └── Card.module.scss  # Card-specific wrapper styles
         │   └── GameControls/
-        │       ├── GameControls.tsx
-        │       └── GameControls.module.scss
+        │       └── GameControls.tsx  # Uses MUI Button, Stack
         └── styles/
-            ├── _variables.scss     # SCSS variables (colors, sizes, timing)
-            ├── _mixins.scss        # Animation mixins, vendor prefixes
+            ├── _variables.scss     # SCSS variables (card sizes, animation timing)
+            ├── _mixins.scss        # Animation mixins
             ├── cards.scss          # Sprite positioning (from cards.css)
             ├── animations.scss     # 3D rotations (from animation.css)
-            └── layout.scss         # Global layout, navbar, wells
+            └── global.scss         # Minimal body reset and card-specific globals
 ```
 
 ### Old Structure (For Reference)
@@ -162,7 +164,7 @@ Blackjack_x_AngularJS_NET/
    npm create vite@latest ClientApp -- --template react-ts
    cd ClientApp
    npm install
-   npm install sass classnames
+   npm install @mui/material @emotion/react @emotion/styled sass classnames
    npm install -D @types/node
    ```
 
@@ -204,7 +206,7 @@ Blackjack_x_AngularJS_NET/
    - Copy `Blackjack_x_AngularJS_NET/BlackJack/BlackJack/Content/Images/full_deck.png` → `BlackjackReact/ClientApp/public/images/full_deck.png`
    - Copy `Blackjack_x_AngularJS_NET/BlackJack/BlackJack/Content/Images/back_of_card.png` → `BlackjackReact/ClientApp/public/images/back_of_card.png`
 
-9. **Create `src/styles/_variables.scss`**
+9. **Create `src/styles/_variables.scss`** (card/animation values only — colors and layout handled by MUI theme)
 
    ```scss
    // Card dimensions
@@ -223,15 +225,6 @@ Blackjack_x_AngularJS_NET/
    // Sprite offsets
    $card-offset-x: 93px;
    $card-offset-y: 115px;
-
-   // Colors
-   $table-green: #0d5d0d;
-   $navbar-bg: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
-   $well-bg: rgba(0, 0, 0, 0.3);
-
-   // Button colors
-   $btn-warning: linear-gradient(to bottom, #f0ad4e, #ec971f);
-   $btn-success: linear-gradient(to bottom, #5cb85c, #449d44);
    ```
 
 10. **Create `src/styles/_mixins.scss`**
@@ -350,80 +343,74 @@ Blackjack_x_AngularJS_NET/
     }
     ```
 
-13. **Create `src/styles/layout.scss`** (replaces Bootstrap)
+13. **Create `src/styles/global.scss`** (minimal — MUI handles layout, buttons, and containers)
 
     ```scss
-    @use "variables" as *;
-
     body {
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: $table-green;
-      color: white;
-      padding: 60px 20px 20px;
       margin: 0;
     }
+    ```
 
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: $navbar-bg;
-      padding: 15px 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
+14. **Create `src/theme.ts`** (MUI theme with game-appropriate colors)
 
-      h1 {
-        margin: 0;
-        font-size: 24px;
-      }
-    }
+    ```typescript
+    import { createTheme } from "@mui/material/styles";
 
-    .well {
-      background: $well-bg;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 6px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition:
-        transform 0.1s,
-        box-shadow 0.2s;
-
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      &.warning {
-        background: $btn-warning;
-        color: white;
-      }
-
-      &.success {
-        background: $btn-success;
-        color: white;
-      }
-    }
+    export const theme = createTheme({
+      palette: {
+        mode: "dark",
+        primary: {
+          main: "#1a1a1a",
+        },
+        secondary: {
+          main: "#ffd700",
+        },
+        background: {
+          default: "#0d5d0d",
+          paper: "rgba(0, 0, 0, 0.3)",
+        },
+        warning: {
+          main: "#f0ad4e",
+        },
+        success: {
+          main: "#5cb85c",
+        },
+      },
+      typography: {
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      },
+      components: {
+        MuiPaper: {
+          styleOverrides: {
+            root: {
+              backgroundImage: "none",
+              boxShadow: "inset 0 2px 8px rgba(0, 0, 0, 0.3)",
+            },
+          },
+        },
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              padding: "12px 30px",
+              fontSize: "18px",
+              fontWeight: "bold",
+              borderRadius: "6px",
+              transition: "transform 0.1s, box-shadow 0.2s",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+              },
+            },
+          },
+        },
+      },
+    });
     ```
 
 ### Phase 4: Create TypeScript Types (1 hour)
 
-14. **Create `src/types/game.types.ts`**
+15. **Create `src/types/game.types.ts`**
 
     ```typescript
     export type Suit = "spade" | "diamond" | "club" | "heart";
@@ -475,7 +462,7 @@ Blackjack_x_AngularJS_NET/
 
 ### Phase 5: Port Deck Service to Hook (3 hours)
 
-15. **Create `src/hooks/useDeck.ts`** - Port from `Scripts/ang/services/deck.js`
+16. **Create `src/hooks/useDeck.ts`** - Port from `Scripts/ang/services/deck.js`
 
     **Critical Logic to Preserve:**
     - Fischer-Yates shuffle algorithm (exact implementation from deck.js lines 20-35)
@@ -484,11 +471,17 @@ Blackjack_x_AngularJS_NET/
     - Reshuffle trigger when `deck.length < 26` (gameController.js line 74)
     - Value map: ace=1, face cards=10, numbers=face value
 
+    **Important:** The deck uses `useRef` (not `useState`) to avoid stale closure issues.
+    React batches state updates, so calling `drawCard()` multiple times in succession
+    (e.g., 8 times in `newHand`) would read the same stale `useState` value each time.
+    `useRef` provides a mutable reference that is always current, matching the original
+    AngularJS service's mutable array behavior.
+
     **Implementation:**
 
     ```typescript
     import { Card, Suit, Value } from "@/types/game.types";
-    import { useState, useCallback } from "react";
+    import { useRef, useCallback } from "react";
 
     const suits: Suit[] = ["spade", "diamond", "club", "heart"];
     const values: Value[] = [
@@ -523,22 +516,42 @@ Blackjack_x_AngularJS_NET/
       ace: 1,
     };
 
-    export function useDeck() {
-      const [deck, setDeck] = useState<Card[]>([]);
+    // Fischer-Yates shuffle (from deck.js)
+    function shuffle(array: Card[]): Card[] {
+      const shuffled = [...array];
+      let counter = shuffled.length;
+      while (counter > 0) {
+        const index = Math.floor(Math.random() * counter);
+        counter--;
+        const temp = shuffled[counter];
+        shuffled[counter] = shuffled[index];
+        shuffled[index] = temp;
+      }
+      return shuffled;
+    }
 
-      // Fischer-Yates shuffle (from deck.js)
-      const shuffle = useCallback((array: Card[]): Card[] => {
-        const shuffled = [...array];
-        let counter = shuffled.length;
-        while (counter > 0) {
-          const index = Math.floor(Math.random() * counter);
-          counter--;
-          const temp = shuffled[counter];
-          shuffled[counter] = shuffled[index];
-          shuffled[index] = temp;
+    // Calculate score with Ace handling (from deck.js addScore)
+    function addScore(cards: Card[]): number {
+      let sum = 0;
+      const cardValues = cards.map((c) => c.value);
+
+      for (const value of cardValues) {
+        sum += valueMap[value];
+      }
+
+      // Handle Ace: if counting as 11 doesn't bust, use 11
+      if (cardValues.includes("ace")) {
+        const ace11Score = sum + 10;
+        if (ace11Score <= 21) {
+          sum = ace11Score;
         }
-        return shuffled;
-      }, []);
+      }
+
+      return sum;
+    }
+
+    export function useDeck() {
+      const deckRef = useRef<Card[]>([]);
 
       // Create and shuffle new deck
       const shuffleDeck = useCallback(() => {
@@ -548,39 +561,20 @@ Blackjack_x_AngularJS_NET/
             newDeck.push({ value, suit });
           }
         }
-        setDeck(shuffle(newDeck));
-      }, [shuffle]);
-
-      // Draw card from deck
-      const drawCard = useCallback((): Card | undefined => {
-        if (deck.length === 0) return undefined;
-        const newDeck = [...deck];
-        const card = newDeck.pop();
-        setDeck(newDeck);
-        return card;
-      }, [deck]);
-
-      // Calculate score with Ace handling (from deck.js addScore)
-      const addScore = useCallback((cards: Card[]): number => {
-        let sum = 0;
-        const cardValues = cards.map((c) => c.value);
-
-        for (const value of cardValues) {
-          sum += valueMap[value];
-        }
-
-        // Handle Ace: if counting as 11 doesn't bust, use 11
-        if (cardValues.includes("ace")) {
-          const ace11Score = sum + 10;
-          if (ace11Score <= 21) {
-            sum = ace11Score;
-          }
-        }
-
-        return sum;
+        deckRef.current = shuffle(newDeck);
       }, []);
 
-      const getRemainingCards = useCallback(() => deck.length, [deck.length]);
+      // Draw card from deck (mutates ref directly — safe for sequential calls)
+      const drawCard = useCallback((): Card => {
+        const card = deckRef.current.pop();
+        if (!card) throw new Error("Deck is empty");
+        return card;
+      }, []);
+
+      const getRemainingCards = useCallback(
+        () => deckRef.current.length,
+        [],
+      );
 
       return { drawCard, addScore, getRemainingCards, shuffleDeck };
     }
@@ -588,7 +582,7 @@ Blackjack_x_AngularJS_NET/
 
 ### Phase 6: Port Game Logic to Hook (4 hours)
 
-16. **Create `src/hooks/useGameState.ts`** - Port from `Scripts/ang/controllers/gameController.js`
+17. **Create `src/hooks/useGameState.ts`** - Port from `Scripts/ang/controllers/gameController.js`
 
     **Critical Logic to Preserve:**
     - Hit action: draw card, check for bust (>21), auto-start new hand if busted (lines 22-34)
@@ -662,7 +656,7 @@ Blackjack_x_AngularJS_NET/
 
 ### Phase 7: Build React Components (6 hours)
 
-17. **Create `src/components/Card/Card.tsx`** - Port from `Scripts/ang/directives/card.js`
+18. **Create `src/components/Card/Card.tsx`** - Port from `Scripts/ang/directives/card.js`
 
     ```tsx
     import { Card as CardType } from "@/types/game.types";
@@ -696,7 +690,7 @@ Blackjack_x_AngularJS_NET/
     }
     ```
 
-18. **Create `src/components/Card/Card.module.scss`**
+19. **Create `src/components/Card/Card.module.scss`**
 
     ```scss
     .cardWrapper {
@@ -705,12 +699,12 @@ Blackjack_x_AngularJS_NET/
     }
     ```
 
-19. **Create `src/components/CardHand/CardHand.tsx`**
+20. **Create `src/components/CardHand/CardHand.tsx`** (uses MUI `Box` and `Typography`)
 
     ```tsx
+    import { Box, Typography } from "@mui/material";
     import { Card as CardType } from "@/types/game.types";
     import { Card } from "../Card/Card";
-    import styles from "./CardHand.module.scss";
 
     interface CardHandProps {
       label: string;
@@ -726,9 +720,11 @@ Blackjack_x_AngularJS_NET/
       gameOver = false,
     }: CardHandProps) {
       return (
-        <div className={styles.cardHand}>
-          <h3>{label}</h3>
-          <div className={styles.cards}>
+        <Box>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            {label}
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             {cards.map((card, index) => (
               <Card
                 key={`${card.suit}-${card.value}-${index}`}
@@ -737,39 +733,35 @@ Blackjack_x_AngularJS_NET/
                 animateEntry={true}
               />
             ))}
-          </div>
-        </div>
+          </Box>
+        </Box>
       );
     }
     ```
 
-20. **Create `src/components/CardHand/CardHand.module.scss`**
-
-    ```scss
-    .cardHand {
-      h3 {
-        margin: 0 0 10px 0;
-        font-size: 18px;
-      }
-
-      .cards {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-    }
-    ```
-
-21. **Create `src/components/Scoreboard/Scoreboard.tsx`**
+21. **Create `src/components/Scoreboard/Scoreboard.tsx`** (uses MUI `Grid` and `Typography`)
 
     ```tsx
-    import styles from "./Scoreboard.module.scss";
+    import { Grid, Typography } from "@mui/material";
 
     interface ScoreboardProps {
       dealerWins: number;
       playerOneWins: number;
       playerTwoWins: number;
       playerThreeWins: number;
+    }
+
+    function ScoreColumn({ label, score }: { label: string; score: number }) {
+      return (
+        <Grid item xs={3} sx={{ textAlign: "center" }}>
+          <Typography variant="subtitle1" fontWeight="bold">
+            {label}
+          </Typography>
+          <Typography variant="h5" color="secondary">
+            {score}
+          </Typography>
+        </Grid>
+      );
     }
 
     export function Scoreboard({
@@ -779,56 +771,20 @@ Blackjack_x_AngularJS_NET/
       playerThreeWins,
     }: ScoreboardProps) {
       return (
-        <div className={styles.scoreboard}>
-          <div className={styles.column}>
-            <div className={styles.label}>Dealer</div>
-            <div className={styles.score}>{dealerWins}</div>
-          </div>
-          <div className={styles.column}>
-            <div className={styles.label}>Player One</div>
-            <div className={styles.score}>{playerOneWins}</div>
-          </div>
-          <div className={styles.column}>
-            <div className={styles.label}>Player Two</div>
-            <div className={styles.score}>{playerTwoWins}</div>
-          </div>
-          <div className={styles.column}>
-            <div className={styles.label}>Player Three</div>
-            <div className={styles.score}>{playerThreeWins}</div>
-          </div>
-        </div>
+        <Grid container spacing={2}>
+          <ScoreColumn label="Dealer" score={dealerWins} />
+          <ScoreColumn label="Player One" score={playerOneWins} />
+          <ScoreColumn label="Player Two" score={playerTwoWins} />
+          <ScoreColumn label="Player Three" score={playerThreeWins} />
+        </Grid>
       );
     }
     ```
 
-22. **Create `src/components/Scoreboard/Scoreboard.module.scss`**
-
-    ```scss
-    .scoreboard {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      text-align: center;
-
-      .column {
-        .label {
-          font-size: 16px;
-          font-weight: bold;
-          margin-bottom: 8px;
-        }
-
-        .score {
-          font-size: 24px;
-          color: #ffd700;
-        }
-      }
-    }
-    ```
-
-23. **Create `src/components/GameControls/GameControls.tsx`**
+22. **Create `src/components/GameControls/GameControls.tsx`** (uses MUI `Button` and `Stack`)
 
     ```tsx
-    import styles from "./GameControls.module.scss";
+    import { Button, Stack } from "@mui/material";
 
     interface GameControlsProps {
       onHit: () => void;
@@ -842,37 +798,43 @@ Blackjack_x_AngularJS_NET/
       disabled = false,
     }: GameControlsProps) {
       return (
-        <div className={styles.controls}>
-          <button className="btn warning" onClick={onHit} disabled={disabled}>
+        <Stack direction="row" spacing={2} justifyContent="center">
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={onHit}
+            disabled={disabled}
+          >
             Hit
-          </button>
-          <button className="btn success" onClick={onStand} disabled={disabled}>
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={onStand}
+            disabled={disabled}
+          >
             Stand
-          </button>
-        </div>
+          </Button>
+        </Stack>
       );
     }
     ```
 
-24. **Create `src/components/GameControls/GameControls.module.scss`**
-
-    ```scss
-    .controls {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-    }
-    ```
-
-25. **Create `src/components/GameBoard/GameBoard.tsx`** - Main orchestrator
+23. **Create `src/components/GameBoard/GameBoard.tsx`** - Main orchestrator (uses MUI `AppBar`, `Toolbar`, `Container`, `Paper`)
 
     ```tsx
     import { useEffect } from "react";
+    import {
+      AppBar,
+      Toolbar,
+      Typography,
+      Container,
+      Paper,
+    } from "@mui/material";
     import { useGameState } from "@/hooks/useGameState";
     import { Scoreboard } from "../Scoreboard/Scoreboard";
     import { CardHand } from "../CardHand/CardHand";
     import { GameControls } from "../GameControls/GameControls";
-    import styles from "./GameBoard.module.scss";
 
     export function GameBoard() {
       const { state, hit, stand, newHand } = useGameState();
@@ -883,78 +845,86 @@ Blackjack_x_AngularJS_NET/
       }, []);
 
       return (
-        <div className={styles.gameBoard}>
-          <nav className="navbar">
-            <h1>BLACKJACK!</h1>
-          </nav>
+        <>
+          <AppBar position="fixed">
+            <Toolbar>
+              <Typography variant="h5" fontWeight="bold">
+                BLACKJACK!
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Toolbar /> {/* Spacer for fixed AppBar */}
 
-          <div className="well">
-            <Scoreboard
-              dealerWins={state.dealerRoundsWon}
-              playerOneWins={state.playerOneRoundsWon}
-              playerTwoWins={state.playerTwoRoundsWon}
-              playerThreeWins={state.playerThreeRoundsWon}
-            />
-          </div>
+          <Container maxWidth="lg" sx={{ py: 3 }}>
+            <Paper sx={{ p: 3, mb: 2 }}>
+              <Scoreboard
+                dealerWins={state.dealerRoundsWon}
+                playerOneWins={state.playerOneRoundsWon}
+                playerTwoWins={state.playerTwoRoundsWon}
+                playerThreeWins={state.playerThreeRoundsWon}
+              />
+            </Paper>
 
-          <div className="well">
-            <CardHand
-              label="Dealer"
-              cards={state.dealerCards}
-              isDealer={true}
-              gameOver={state.gameOver}
-            />
-          </div>
+            <Paper sx={{ p: 3, mb: 2 }}>
+              <CardHand
+                label="Dealer"
+                cards={state.dealerCards}
+                isDealer={true}
+                gameOver={state.gameOver}
+              />
+            </Paper>
 
-          <div className="well">
-            <CardHand label="Player One (You)" cards={state.playerOneCards} />
-          </div>
+            <Paper sx={{ p: 3, mb: 2 }}>
+              <CardHand
+                label="Player One (You)"
+                cards={state.playerOneCards}
+              />
+            </Paper>
 
-          <div className="well">
-            <CardHand label="Player Two" cards={state.playerTwoCards} />
-          </div>
+            <Paper sx={{ p: 3, mb: 2 }}>
+              <CardHand label="Player Two" cards={state.playerTwoCards} />
+            </Paper>
 
-          <div className="well">
-            <CardHand label="Player Three" cards={state.playerThreeCards} />
-          </div>
+            <Paper sx={{ p: 3, mb: 2 }}>
+              <CardHand label="Player Three" cards={state.playerThreeCards} />
+            </Paper>
 
-          <div className="well">
-            <GameControls
-              onHit={hit}
-              onStand={stand}
-              disabled={state.gameOver}
-            />
-          </div>
-        </div>
+            <Paper sx={{ p: 3 }}>
+              <GameControls
+                onHit={hit}
+                onStand={stand}
+                disabled={state.gameOver}
+              />
+            </Paper>
+          </Container>
+        </>
       );
     }
     ```
 
-26. **Create `src/components/GameBoard/GameBoard.module.scss`**
-
-    ```scss
-    .gameBoard {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    ```
-
-27. **Update `src/App.tsx`**
+24. **Update `src/App.tsx`** (wraps app in MUI `ThemeProvider` and `CssBaseline`)
 
     ```tsx
+    import { ThemeProvider, CssBaseline } from "@mui/material";
+    import { theme } from "./theme";
     import { GameBoard } from "./components/GameBoard/GameBoard";
-    import "./styles/layout.scss";
+    import "./styles/global.scss";
     import "./styles/cards.scss";
     import "./styles/animations.scss";
 
     function App() {
-      return <GameBoard />;
+      return (
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <GameBoard />
+        </ThemeProvider>
+      );
     }
 
     export default App;
     ```
 
-28. **Update `src/main.tsx`**
+25. **Update `src/main.tsx`**
 
     ```tsx
     import React from "react";
@@ -970,36 +940,36 @@ Blackjack_x_AngularJS_NET/
 
 ### Phase 8: Testing & Refinement (4 hours)
 
-29. **Test deck logic**
+26. **Test deck logic**
     - Verify Fischer-Yates shuffle produces random distributions
     - Test Ace scoring: A-K should be 21, A-A-9 should be 21, A-A-A-8 should be 21
     - Confirm reshuffle triggers at <26 cards
 
-30. **Test game mechanics**
+27. **Test game mechanics**
     - Hit until bust (score >21) - verify dealer wins
     - Stand at 18 - verify dealer draws until 17+
     - Test dealer bust (>21) - verify player wins
     - Test push scenario (equal scores)
 
-31. **Test animations**
+28. **Test animations**
     - Verify card entry animation (3D rotation, 550ms)
     - Confirm dealer hole card flips on gameOver state change
     - Check timing feels identical to original
 
-32. **Replace browser alerts** with better UX
-    - Consider toast notifications (react-hot-toast) or modal dialogs
+29. **Replace browser alerts** with better UX
+    - Consider MUI `Snackbar`/`Alert` components or dialog
     - Show "Busted!", "Dealer Busted!", "Push!", "You Win!" messages
 
-33. **Cross-browser testing** (Chrome, Firefox, Safari, Edge)
+30. **Cross-browser testing** (Chrome, Firefox, Safari, Edge)
 
 ### Phase 9: Build Configuration (2 hours)
 
-34. **Configure Vite production build**
+31. **Configure Vite production build**
     - Verify output to `wwwroot/dist` is correct
     - Test minification and tree-shaking
     - Ensure source maps are generated for debugging
 
-35. **Add MSBuild pre-build task** (optional) to auto-build React
+32. **Add MSBuild pre-build task** (optional) to auto-build React
 
     ```xml
     <Target Name="BuildClientApp" BeforeTargets="Build">
@@ -1008,7 +978,7 @@ Blackjack_x_AngularJS_NET/
     </Target>
     ```
 
-36. **Test production build**
+33. **Test production build**
 
     ```bash
     cd ClientApp
@@ -1017,7 +987,7 @@ Blackjack_x_AngularJS_NET/
     dotnet run --configuration Release
     ```
 
-37. **Update CLAUDE.md** with new architecture and build commands
+34. **Update CLAUDE.md** with new architecture and build commands
 
 ## Critical Files to Port
 
@@ -1108,6 +1078,9 @@ After implementation, verify:
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "@mui/material": "^5.15.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "classnames": "^2.5.1"
   },
   "devDependencies": {
@@ -1122,13 +1095,13 @@ After implementation, verify:
 }
 ```
 
-**Total Production Bundle Size:** ~180KB gzipped (React + game code + SCSS compiled)
+**Total Production Bundle Size:** ~250KB gzipped (React + MUI + game code + SCSS compiled)
 
 ## Post-Migration Considerations
 
 After successful migration, consider:
 
-- Replace browser `alert()` with toast notifications or modals
+- Replace browser `alert()` with MUI `Snackbar`/`Alert` or `Dialog` components
 - Add sound effects (card deal, win/loss)
 - Implement betting system (replace round counters)
 - Mobile responsive layout (touch-friendly controls)
