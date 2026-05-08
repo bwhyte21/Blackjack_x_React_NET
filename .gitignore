@@ -244,3 +244,6 @@ ModelManifest.xml
 # Vite build output
 wwwroot/dist/
 ClientApp/dist/
+
+/.claude
+/docs
