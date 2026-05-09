@@ -247,3 +247,6 @@ ClientApp/dist/
 
 /.claude
 /docs
+
+# ASP.NET Core environment-specific settings
+appsettings.Development.json
