@@ -1,28 +1,13 @@
-﻿## Description
+﻿# Summary
 
-- [Enter Description Here]
+- [Enter Summary Here]
 
+## Demo / Screenshots
 
-### Demo / Screenshots
+- [Upload Video/Screenshot(s) Here, If applicable]
 
-- [Upload Video/Screenshot(s) Here]
+### Test Plan
 
-
-### How to test feature
-
-1. [Enter Testing Instructions Here]
-
+1. [Enter Testing Instructions Here, If applicable]
 
 ---
-
-## Checklist
-
-- [ ] Ran Prettier on created/modified files.
-- [ ] Ran linter
-- [ ] Tested locally.
-- [ ] Confirmed no new errors/warnings in tests, console and network tab.
-- [ ] Added/Updated Tests.
-- [ ] Added screenshot(s) and/or demo video(s) of the feature (if applicable).
-- [ ] Added testing instructions to the PR description (if applicable).
-- [ ] Updated the documentation (if applicable).
-- [ ] Requested code review from CoPilot.
